@@ -1,0 +1,27 @@
+{
+    "author": "Théo LECARDONNEL",
+    "license": "UNLICENSED",
+    "type": "module",
+    "name": "vanilla",
+    "version": "1.0.0",
+    "description": "USTrain",
+    "main": "docs/index.html",
+    "scripts": {
+        "start": "lite-server"
+    },
+    "dependencies": {
+        "@babel/core": "^7.22.20",
+        "leaflet.animatedmarker": "^1.0.0"
+    },
+    "resolutions": {
+        "@babel/preset-env": "7.13.8"
+    },
+    "staticFiles": {
+        "staticPath": [
+            "./files"
+        ]
+    },
+    "devDependencies": {
+        "lite-server": "^2.6.1"
+    }
+}
