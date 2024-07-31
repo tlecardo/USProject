@@ -19,7 +19,7 @@ async function renderMap() {
   map.fitBounds(new L.LatLngBounds(new L.LatLng(32, -122.292293), new L.LatLng(45.500295, -73.567149)));
 
   for await (let name of ['Adirondack', 'Lake_Shore_Limited', 'Empire_Builder', 'Sunset_Limited', 'Crescent', 'Coast_Starlight']) {
-    await fetch(`https://raw.githubusercontent.com/tlecardo/USProject/main/files/USTracks/${name}.gpx`)
+    await fetch(`https://raw.githubusercontent.com/tlecardo/USProject/main/USTracks/${name}.gpx`)
       .then(res => res.text())
       .then(res => {
 
@@ -45,7 +45,7 @@ async function renderMap() {
   }
 
   for await (let name of ['California_Zephyr', 'Southwest_Chief']) {
-    await fetch(`https://raw.githubusercontent.com/tlecardo/USProject/main/files/USTracks/${name}.gpx`)
+    await fetch(`https://raw.githubusercontent.com/tlecardo/USProject/main/USTracks/${name}.gpx`)
       .then(res => res.text())
       .then(res => {
 
