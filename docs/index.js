@@ -15,7 +15,6 @@ async function renderMap() {
   L.marker([45.500295, -73.567149]).bindTooltip(`<div class="city title">Montréal</div>`).addTo(map);
   L.marker([38.898487, -77.005291]).bindTooltip(`<div class="city title">Washington</div>`).addTo(map);
 
-
   map.fitBounds(new L.LatLngBounds(new L.LatLng(32, -122.292293), new L.LatLng(45.500295, -73.567149)));
 
   for await (let name of ['Adirondack', 'Lake_Shore_Limited', 'Empire_Builder', 'Sunset_Limited', 'Crescent', 'Coast_Starlight']) {
@@ -69,6 +68,63 @@ async function renderMap() {
         ).addTo(map);
       })
   }
+
+  // test
+
+  var yellowIcon = new L.Icon({
+    iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-yellow.png',
+    shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+    iconSize: [25, 41],
+    iconAnchor: [12, 41],
+    popupAnchor: [1, -34],
+    shadowSize: [41, 41],
+  });
+
+  let sections = [
+    {
+      route: "Sunset Limited",
+      origin: {
+        code: "NOL",
+        date: "2024-08-03T09:05:00"
+      },
+      dest: {
+        code: "LAX",
+        date: "2024-08-05T07:00"
+      },
+    },
+    {
+      route: "Coast Starlight",
+      origin: {
+        code: "LAX",
+        date: "2024-08-05T09:51:00"
+      },
+      dest: {
+        code: "SEA",
+        date: "2024-08-06T19:51:00"
+      },
+    }]
+
+  var today = new Date();
+  let current_section = sections.filter(section => today >= new Date(section.origin.date) && today <= new Date(section.dest.date))[0]
+
+  await fetch("https://api-v3.amtraker.com/v3/trains")
+    .then(res => res.json())
+    .then(res => {
+      let cur_travel = Object.values(res).filter(value =>
+        value[0].routeName === current_section.route
+        && value[0].stations.at(-1).code === current_section.dest.code
+        && value[0].stations[0].code === current_section.origin.code
+        && value[0].stations.at(-1).dep.includes(current_section.dest.date)
+        && value[0].stations[0].dep.includes(current_section.origin.date)
+      )[0][0]
+
+      console.log(cur_travel)
+      let currrent_pos = [cur_travel.lat, cur_travel.lon]
+      L.marker(currrent_pos, { icon: yellowIcon })
+        .bindTooltip(`<div class="city title">Train courant</div>`)
+        .addTo(map)
+    }
+    )
 }
 
 renderMap().catch(console.error)

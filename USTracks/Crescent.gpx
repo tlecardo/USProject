@@ -5,7 +5,7 @@
  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
  xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd">
  <trk>
-  <name>Crescent South</name>
+  <name>Crescent</name>
   <trkseg>
    <trkpt lat="29.946279" lon="-90.078921"/>
    <trkpt lat="29.948355" lon="-90.082633"/>
@@ -18779,7 +18779,7 @@
    <trkpt lat="40.701771" lon="-74.192394"/>
    <trkpt lat="40.702438" lon="-74.191984"/>
    <trkpt lat="40.703192" lon="-74.191535"/>
-<trkpt lat="40.70319" lon="-74.19153"/>
+   <trkpt lat="40.70319" lon="-74.19153"/>
    <trkpt lat="40.70322" lon="-74.19151"/>
    <trkpt lat="40.70437" lon="-74.19082"/>
    <trkpt lat="40.70449" lon="-74.19075"/>
