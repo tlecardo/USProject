@@ -128,8 +128,24 @@ async function renderMap() {
       L.marker(currrent_pos, { icon: yellowIcon })
         .bindTooltip(`<div class="city title">Train courant</div>`)
         .addTo(map)
+
+      var update_date = new Date(cur_travel.updatedAt)
+      var diff_update = new Date(today - update_date)
+      var seconds = `${diff_update.getSeconds()}`.padStart(2, "0")
+      var minutes = `${diff_update.getMinutes()}`
+
+      var legend = L.control({ position: "bottomleft" });
+      legend.onAdd = function (map) {
+        var div = L.DomUtil.create("div", "legend");
+        div.innerHTML += `<h4>Informations (act. ${minutes}' ${seconds}'')</h4>`;
+        div.innerHTML += `<span>Vitesse actuelle : ${(1.609344 * cur_travel.velocity).toFixed(2)} km/h</span><br>`;
+        return div;
+      };
+
+      legend.addTo(map);
     }
     )
+
 }
 
 renderMap().catch(console.error)
