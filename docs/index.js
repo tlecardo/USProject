@@ -85,11 +85,11 @@ async function renderMap() {
       route: "Sunset Limited",
       origin: {
         code: "NOL",
-        date: "2024-08-03T09:05:00"
+        date: "2024-08-03T09:00:00"
       },
       dest: {
         code: "LAX",
-        date: "2024-08-05T07:00"
+        date: "2024-08-05T05:35:00"
       },
     },
     {
@@ -107,15 +107,20 @@ async function renderMap() {
   var today = new Date();
   let current_section = sections.filter(section => today >= new Date(section.origin.date) && today <= new Date(section.dest.date))[0]
 
+  console.log(current_section)
+
   await fetch("https://api-v3.amtraker.com/v3/trains")
     .then(res => res.json())
     .then(res => {
+
+      console.log(res)
+
       let cur_travel = Object.values(res).filter(value =>
         value[0].routeName === current_section.route
         && value[0].stations.at(-1).code === current_section.dest.code
         && value[0].stations[0].code === current_section.origin.code
-        && value[0].stations.at(-1).dep.includes(current_section.dest.date)
-        && value[0].stations[0].dep.includes(current_section.origin.date)
+        && value[0].stations.at(-1).schDep.includes(current_section.dest.date)
+        && value[0].stations[0].schDep.includes(current_section.origin.date)
       )[0][0]
 
       console.log(cur_travel)
