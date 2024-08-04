@@ -134,11 +134,16 @@ async function renderMap() {
       var seconds = `${diff_update.getSeconds()}`.padStart(2, "0")
       var minutes = `${diff_update.getMinutes()}`
 
+      /*
+      <i class="icon" style="background-image: url(https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-yellow.png);background-repeat: no-repeat;"></i>
+      */
+
       var legend = L.control({ position: "bottomleft" });
       legend.onAdd = function (map) {
         var div = L.DomUtil.create("div", "legend");
         div.innerHTML += `<h4>Informations (act. ${minutes}' ${seconds}'')</h4>`;
         div.innerHTML += `<span>Vitesse actuelle : ${(1.609344 * cur_travel.velocity).toFixed(2)} km/h</span><br>`;
+        div.innerHTML += `<span>Prochain arrêt : ${cur_travel.eventName}</span><br>`;
         return div;
       };
 
