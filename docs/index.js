@@ -80,77 +80,121 @@ async function renderMap() {
     shadowSize: [41, 41],
   });
 
-  let sections = [
+  var sections = [
     {
       route: "Sunset Limited",
       origin: {
         code: "NOL",
-        date: "2024-08-03T09:00:00"
+        date: "2024-08-03T09:00:00-05:00"
       },
       dest: {
         code: "LAX",
-        date: "2024-08-05T05:35:00"
+        date: "2024-08-05T05:35:00-07:00"
       },
     },
     {
       route: "Coast Starlight",
       origin: {
         code: "LAX",
-        date: "2024-08-05T09:51:00"
+        date: "2024-08-07T09:51:00-07:00"
       },
       dest: {
         code: "SEA",
-        date: "2024-08-06T19:51:00"
+        date: "2024-08-08T19:51:00-07:00"
       },
     }]
 
   var today = new Date();
-  let current_section = sections.filter(section => today >= new Date(section.origin.date) && today <= new Date(section.dest.date))[0]
+  let cur_section = sections.filter(section => today >= new Date(section.origin.date) && today <= new Date(section.dest.date))
 
-  console.log(current_section)
-
-  await fetch("https://api-v3.amtraker.com/v3/trains")
+  await fetch("https://api-v3.amtraker.com/v3/stations")
     .then(res => res.json())
-    .then(res => {
+    .then(console.log)
 
-      console.log(res)
+  if (cur_section.length > 0) {
 
-      let cur_travel = Object.values(res).filter(value =>
-        value[0].routeName === current_section.route
-        && value[0].stations.at(-1).code === current_section.dest.code
-        && value[0].stations[0].code === current_section.origin.code
-        && value[0].stations.at(-1).schDep.includes(current_section.dest.date)
-        && value[0].stations[0].schDep.includes(current_section.origin.date)
-      )[0][0]
+    cur_section = cur_section[0]
 
-      console.log(cur_travel)
-      let currrent_pos = [cur_travel.lat, cur_travel.lon]
-      L.marker(currrent_pos, { icon: yellowIcon })
-        .bindTooltip(`<div class="city title">Train courant</div>`)
-        .addTo(map)
+    await fetch("https://api-v3.amtraker.com/v3/trains")
+      .then(res => res.json())
+      .then(async res => {
+        // conditions à ajuster dans le cas de parcours partiel
+        let cur_travel = Object.values(res).filter(value =>
+          value[0].routeName === cur_section.route
+          && value[0].stations.at(-1).code === cur_section.dest.code
+          && value[0].stations[0].code === cur_section.origin.code
+          && value[0].stations.at(-1).schDep.includes(cur_section.dest.date)
+          && value[0].stations[0].schDep.includes(cur_section.origin.date)
+        )[0][0]
 
-      var update_date = new Date(cur_travel.updatedAt)
-      var diff_update = new Date(today - update_date)
-      var seconds = `${diff_update.getSeconds()}`.padStart(2, "0")
-      var minutes = `${diff_update.getMinutes()}`
+        console.log(cur_travel)
 
-      /*
-      <i class="icon" style="background-image: url(https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-yellow.png);background-repeat: no-repeat;"></i>
-      */
+        let cur_pos = [cur_travel.lat, cur_travel.lon]
+        L.marker(cur_pos, { icon: yellowIcon })
+          .addTo(map)
 
-      var legend = L.control({ position: "bottomleft" });
-      legend.onAdd = function (map) {
-        var div = L.DomUtil.create("div", "legend");
-        div.innerHTML += `<h4>Informations (act. ${minutes}' ${seconds}'')</h4>`;
-        div.innerHTML += `<span>Vitesse actuelle : ${(1.609344 * cur_travel.velocity).toFixed(2)} km/h</span><br>`;
-        div.innerHTML += `<span>Prochain arrêt : ${cur_travel.eventName}</span><br>`;
-        return div;
-      };
+        var cur_loc = await fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${cur_pos[0]}&lon=${cur_pos[1]}`)
+          .then(res => res.json())
+          .then(res => {
+            return `${res.address.town.slice(0, 20)} (${res.address.state.slice(0, 20)})`
+          })
 
-      legend.addTo(map);
+        console.log(cur_loc)
+
+        var update_date = new Date(cur_travel.updatedAt)
+        var diff_update = new Date(today - update_date)
+        var seconds = `${diff_update.getSeconds()}`.padStart(2, "0")
+        var minutes = `${diff_update.getMinutes()}`
+
+        var legend = L.control({ position: "bottomleft" });
+        legend.onAdd = function (map) {
+          var div = L.DomUtil.create("div", "legend");
+          div.innerHTML += `<h4>Informations (act. ${minutes}' ${seconds}'')</h4>`;
+          div.innerHTML += `<center><span>${cur_loc}</span></center>`;
+          div.innerHTML += `<span>Vitesse actuelle : ${(1.609344 * cur_travel.velocity).toFixed(2)} km/h</span><br>`;
+          div.innerHTML += `<span>Prochain arrêt : ${cur_travel.eventName}</span><br>`;
+          return div;
+        };
+        legend.addTo(map);
+      }
+      )
+  } else {
+
+    var cur_code = "MTR"
+    var next_code = "ALB"
+    for (let idx = 0; idx < sections.length; idx++) {
+      if (new Date(sections[idx].dest.date) <= today && new Date(sections[idx + 1].dest.date) >= today) {
+        cur_code = sections[idx].dest.code
+        next_code = sections[idx + 1].dest.code
+        break
+      }
     }
-    )
 
+    await fetch("https://api-v3.amtraker.com/v3/stations")
+      .then(res => res.json())
+      .then(res => {
+        var cur_station = res[cur_code]
+        var next_term = res[next_code]
+        console.log(cur_station)
+
+        let cur_pos = [cur_station.lat, cur_station.lon]
+        L.marker(cur_pos, { icon: yellowIcon })
+          .addTo(map)
+
+        var legend = L.control({ position: "bottomleft" });
+        legend.onAdd = function (map) {
+          var div = L.DomUtil.create("div", "legend");
+          div.innerHTML += `<h4>Informations</h4>`;
+          div.innerHTML += `<span>Ville actuelle : ${cur_station.city} (${cur_station.state})</span><br>`;
+          div.innerHTML += `<span>Vitesse actuelle : --.-- km/h</span><br>`;
+          div.innerHTML += `<span>Prochaine destination : ${next_term.city} (${next_term.state})</span><br>`;
+          return div;
+        };
+
+        legend.addTo(map);
+      }
+      )
+  }
 }
 
 renderMap().catch(console.error)
