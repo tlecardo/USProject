@@ -17,6 +17,7 @@ async function renderMap() {
 
   map.fitBounds(new L.LatLngBounds(new L.LatLng(32, -122.292293), new L.LatLng(45.500295, -73.567149)));
 
+  /*
   for await (let name of ['Adirondack', 'Lake_Shore_Limited', 'Empire_Builder', 'Sunset_Limited', 'Crescent', 'Coast_Starlight']) {
     await fetch(`https://raw.githubusercontent.com/tlecardo/USProject/main/USTracks/${name}.gpx`)
       .then(res => res.text())
@@ -68,6 +69,19 @@ async function renderMap() {
         ).addTo(map);
       })
   }
+      */
+
+
+  await fetch(`https://raw.githubusercontent.com/tlecardo/USProject/main/USTracks/Amtrak_tracks.geojson`)
+  .then(res => res.text())
+  .then(res => {
+
+    new L.geoJSON(res, {
+      async: true,
+      marker_options: { startIconUrl: '', endIconUrl: '', shadowUrl: '' },
+      polyline_options: { color: "blue", opacity: 0.3, dashArray: "5 10" },
+    }).addTo(map);
+  })
 
   // test
 
@@ -80,16 +94,17 @@ async function renderMap() {
     shadowSize: [41, 41],
   });
 
+  /*
   var sections = [
     {
       route: "Sunset Limited",
       origin: {
         code: "NOL",
-        date: "2024-08-03T09:00:00-05:00"
+        date: "2024-08-05T09:00:00-05:00"
       },
       dest: {
         code: "LAX",
-        date: "2024-08-05T05:35:00-07:00"
+        date: "2024-08-07T05:35:00-07:00"
       },
     },
     {
@@ -103,61 +118,90 @@ async function renderMap() {
         date: "2024-08-08T19:51:00-07:00"
       },
     }]
+    */
+
+  var sections = [
+    {
+      route: "Empire Builder",
+      origin: {
+        code: "CHI",
+        date: "2024-08-04T15:05:00-05:00"
+      },
+      dest: {
+        code: "MOT",
+        date: "2024-08-05T09:51:00-05:00"
+      },
+    }
+  ]
 
   var today = new Date();
-  let cur_section = sections.filter(section => today >= new Date(section.origin.date) && today <= new Date(section.dest.date))
+  var cur_section = sections.filter(section => today >= new Date(section.origin.date) && today <= new Date(section.dest.date))
+  console.log(cur_section)
 
-  await fetch("https://api-v3.amtraker.com/v3/stations")
+  var stations = await fetch("https://api-v3.amtraker.com/v3/stations")
     .then(res => res.json())
-    .then(console.log)
+    .then(res => { return res })
+  console.log(stations)
+
+  var trains = await fetch("https://api-v3.amtraker.com/v3/trains")
+    .then(res => res.json())
+    .then(res => { return Object.values(res).flat(Infinity) })
+  console.log(trains)
 
   if (cur_section.length > 0) {
 
     cur_section = cur_section[0]
 
-    await fetch("https://api-v3.amtraker.com/v3/trains")
+    cur_travel = trains
+      .filter(value => value.routeName === cur_section.route
+        && value.trainState === "Active")
+      .filter(value => {
+        var nb_match = value.stations.reduce(
+          (prev, cur) => prev + (cur.code === cur_section.dest.code && cur.schDep.includes(cur_section.dest.date))
+            || (cur.code === cur_section.origin.code && cur.schDep.includes(cur_section.origin.date)), 0)
+        return nb_match === 2
+      })[0]
+
+    console.log(cur_travel)
+
+    var schDestDate = new Date(cur_travel.stations.at(-1).schDep)
+    var curDestDate = new Date(cur_travel.stations.at(-1).dep)
+    var diff_delay = (schDestDate - curDestDate) / 1000
+    var diff_hours = Math.floor(diff_delay / 3600, 1)
+    var diff_minutes = (diff_delay - 3600 * diff_hours) / 60
+
+    let cur_pos = [cur_travel.lat, cur_travel.lon]
+    L.marker(cur_pos, { icon: yellowIcon })
+      .addTo(map)
+
+    var cur_loc = await fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${cur_pos[0]}&lon=${cur_pos[1]}`)
       .then(res => res.json())
-      .then(async res => {
-        // conditions à ajuster dans le cas de parcours partiel
-        let cur_travel = Object.values(res).filter(value =>
-          value[0].routeName === cur_section.route
-          && value[0].stations.at(-1).code === cur_section.dest.code
-          && value[0].stations[0].code === cur_section.origin.code
-          && value[0].stations.at(-1).schDep.includes(cur_section.dest.date)
-          && value[0].stations[0].schDep.includes(cur_section.origin.date)
-        )[0][0]
+      .then(res => {
+        var key_city = Object.keys(res.address).includes("city") ? "city" : (
+          Object.keys(res.address).includes("town") ? "town" : (
+            Object.keys(res.address).includes("village") ? "village" : null))
 
-        console.log(cur_travel)
+        var town = key_city ? new String(res.address[key_city]) : "----"
+        var state = new String(res.address["ISO3166-2-lvl4"].split("-")[1])
+        return `${town.slice(0, 20)} (${state})`
+      })
 
-        let cur_pos = [cur_travel.lat, cur_travel.lon]
-        L.marker(cur_pos, { icon: yellowIcon })
-          .addTo(map)
+    var update_date = new Date(cur_travel.updatedAt)
+    var diff_update = new Date(today - update_date)
+    var seconds = `${diff_update.getSeconds()}`.padStart(2, "0")
+    var minutes = `${diff_update.getMinutes()}`
 
-        var cur_loc = await fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${cur_pos[0]}&lon=${cur_pos[1]}`)
-          .then(res => res.json())
-          .then(res => {
-            return `${res.address.town.slice(0, 20)} (${res.address.state.slice(0, 20)})`
-          })
-
-        console.log(cur_loc)
-
-        var update_date = new Date(cur_travel.updatedAt)
-        var diff_update = new Date(today - update_date)
-        var seconds = `${diff_update.getSeconds()}`.padStart(2, "0")
-        var minutes = `${diff_update.getMinutes()}`
-
-        var legend = L.control({ position: "bottomleft" });
-        legend.onAdd = function (map) {
-          var div = L.DomUtil.create("div", "legend");
-          div.innerHTML += `<h4>Informations (act. ${minutes}' ${seconds}'')</h4>`;
-          div.innerHTML += `<center><span>${cur_loc}</span></center>`;
-          div.innerHTML += `<span>Vitesse actuelle : ${(1.609344 * cur_travel.velocity).toFixed(2)} km/h</span><br>`;
-          div.innerHTML += `<span>Prochain arrêt : ${cur_travel.eventName}</span><br>`;
-          return div;
-        };
-        legend.addTo(map);
-      }
-      )
+    var legend = L.control({ position: "bottomleft" });
+    legend.onAdd = function (map) {
+      var div = L.DomUtil.create("div", "legend");
+      div.innerHTML += `<h4>Informations (act. ${minutes}' ${seconds}'')</h4>`;
+      div.innerHTML += `<center><span>${cur_loc}</span></center>`;
+      div.innerHTML += `<span>Vitesse actuelle : ${(1.609344 * cur_travel.velocity).toFixed(2)} km/h</span><br>`;
+      div.innerHTML += `<span>Prochain arrêt : ${cur_travel.eventName}</span><br>`;
+      div.innerHTML += `<span>Retard de ${diff_hours}h${diff_minutes}m</span><br>`;
+      return div;
+    };
+    legend.addTo(map);
   } else {
 
     var cur_code = "MTR"
@@ -170,30 +214,24 @@ async function renderMap() {
       }
     }
 
-    await fetch("https://api-v3.amtraker.com/v3/stations")
-      .then(res => res.json())
-      .then(res => {
-        var cur_station = res[cur_code]
-        var next_term = res[next_code]
-        console.log(cur_station)
+    var cur_station = stations[cur_code]
+    var next_term = stations[next_code]
 
-        let cur_pos = [cur_station.lat, cur_station.lon]
-        L.marker(cur_pos, { icon: yellowIcon })
-          .addTo(map)
+    let cur_pos = [cur_station.lat, cur_station.lon]
+    L.marker(cur_pos, { icon: yellowIcon })
+      .addTo(map)
 
-        var legend = L.control({ position: "bottomleft" });
-        legend.onAdd = function (map) {
-          var div = L.DomUtil.create("div", "legend");
-          div.innerHTML += `<h4>Informations</h4>`;
-          div.innerHTML += `<span>Ville actuelle : ${cur_station.city} (${cur_station.state})</span><br>`;
-          div.innerHTML += `<span>Vitesse actuelle : --.-- km/h</span><br>`;
-          div.innerHTML += `<span>Prochaine destination : ${next_term.city} (${next_term.state})</span><br>`;
-          return div;
-        };
+    var legend = L.control({ position: "bottomleft" });
+    legend.onAdd = function (map) {
+      var div = L.DomUtil.create("div", "legend");
+      div.innerHTML += `<h4>Informations</h4>`;
+      div.innerHTML += `<span>Ville actuelle : ${cur_station.city} (${cur_station.state})</span><br>`;
+      div.innerHTML += `<span>Vitesse actuelle : --.-- km/h</span><br>`;
+      div.innerHTML += `<span>Prochaine destination : ${next_term.city} (${next_term.state})</span><br>`;
+      return div;
+    };
 
-        legend.addTo(map);
-      }
-      )
+    legend.addTo(map);
   }
 }
 
