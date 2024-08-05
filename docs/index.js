@@ -75,7 +75,7 @@ async function renderMap() {
   await fetch(`https://raw.githubusercontent.com/tlecardo/USProject/main/USTracks/Amtrak_tracks.geojson`)
   .then(res => res.text())
   .then(res => {
-
+    console.log(res)
     new L.geoJSON(res, {
       async: true,
       marker_options: { startIconUrl: '', endIconUrl: '', shadowUrl: '' },
