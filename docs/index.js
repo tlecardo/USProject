@@ -17,71 +17,21 @@ async function renderMap() {
 
   map.fitBounds(new L.LatLngBounds(new L.LatLng(32, -122.292293), new L.LatLng(45.500295, -73.567149)));
 
-  /*
-  for await (let name of ['Adirondack', 'Lake_Shore_Limited', 'Empire_Builder', 'Sunset_Limited', 'Crescent', 'Coast_Starlight']) {
-    await fetch(`https://raw.githubusercontent.com/tlecardo/USProject/main/USTracks/${name}.gpx`)
-      .then(res => res.text())
-      .then(res => {
-
-        let time = res.match(/time = [0-9]*h [0-9]*m/)[0]
-          .replace("time = ", "")
-
-        let dist = res.match(/track-length = [0-9]* filtered/)[0]
-          .replace("track-length = ", "")
-          .replace(" filtered", "")
-
-        dist = Math.round(dist / 100) / 10
-        dist = parseInt(dist).toLocaleString()
-
-        new L.GPX(res, {
-          async: true,
-          marker_options: { startIconUrl: '', endIconUrl: '', shadowUrl: '' },
-          polyline_options: { color: "blue", opacity: 0.7, dashArray: "5 10" },
-        }).bindTooltip(
-          `<div class="track title">${name.replaceAll("_", " ")}</div><div class="track info">${dist} kms</div><div class="track info">${time}</div>`,
-          { sticky: true, }
-        ).addTo(map);
-      })
-  }
-
-  for await (let name of ['California_Zephyr', 'Southwest_Chief']) {
-    await fetch(`https://raw.githubusercontent.com/tlecardo/USProject/main/USTracks/${name}.gpx`)
-      .then(res => res.text())
-      .then(res => {
-
-        let time = res.match(/time = [0-9]*h [0-9]*m/)[0]
-          .replace("time = ", "")
-
-        let dist = res.match(/track-length = [0-9]* filtered/)[0]
-          .replace("track-length = ", "")
-          .replace(" filtered", "")
-
-        dist = Math.round(dist / 100) / 10
-        dist = parseInt(dist).toLocaleString()
-
-        new L.GPX(res, {
-          async: true,
-          marker_options: { startIconUrl: '', endIconUrl: '', shadowUrl: '' },
-          polyline_options: { color: "blue", opacity: 0.3, dashArray: "5 10" },
-        }).bindTooltip(
-          `<div class="track title">${name.replaceAll("_", " ")}</div><div class="track info">${dist} kms</div><div class="track info">${time}</div>`,
-          { sticky: true, }
-        ).addTo(map);
-      })
-  }
-      */
-
-
   await fetch(`https://raw.githubusercontent.com/tlecardo/USProject/main/USTracks/Amtrak_tracks.geojson`)
-  .then(res => res.json())
-  .then(res => {
-    console.log(res.body)
-    new L.geoJSON(res, {
-      async: true,
-      marker_options: { startIconUrl: '', endIconUrl: '', shadowUrl: '' },
-      polyline_options: { color: "blue", opacity: 0.3, dashArray: "5 10" },
-    }).addTo(map);
-  })
+    .then(res => res.json())
+    .then(res => {
+      console.log(res.body)
+      new L.geoJSON(res, {
+        onEachFeature: function (feature, layer) {
+          layer.bindTooltip(
+            `<div class="track title">${feature.properties.name}</div>`,
+            { sticky: true, });
+        },
+        async: true,
+        marker_options: { startIconUrl: '', endIconUrl: '', shadowUrl: '' },
+        style: { color: "blue", opacity: 0.5, dashArray: "5 10" },
+      }).addTo(map);
+    })
 
   // test
 
@@ -94,7 +44,6 @@ async function renderMap() {
     shadowSize: [41, 41],
   });
 
-  /*
   var sections = [
     {
       route: "Sunset Limited",
@@ -118,21 +67,6 @@ async function renderMap() {
         date: "2024-08-08T19:51:00-07:00"
       },
     }]
-    */
-
-  var sections = [
-    {
-      route: "Empire Builder",
-      origin: {
-        code: "CHI",
-        date: "2024-08-04T15:05:00-05:00"
-      },
-      dest: {
-        code: "MOT",
-        date: "2024-08-05T09:51:00-05:00"
-      },
-    }
-  ]
 
   var today = new Date();
   var cur_section = sections.filter(section => today >= new Date(section.origin.date) && today <= new Date(section.dest.date))
