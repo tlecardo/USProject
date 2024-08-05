@@ -1,3 +1,9 @@
+let convertString = function (milisecs) {
+  var diff_hours = Math.floor(milisecs / 3600, 1)
+  var diff_minutes = (milisecs - 3600 * diff_hours) / 60
+  return `${diff_hours}h${diff_minutes}m`
+}
+
 async function renderMap() {
   const map = L.map(document.querySelector(".map"));
 
@@ -8,7 +14,6 @@ async function renderMap() {
   L.marker([41.878773, -87.638622]).bindTooltip(`<div class="city title">Chicago</div>`).addTo(map);
   L.marker([47.597811, -122.329564]).bindTooltip(`<div class="city title">Seattle</div>`).addTo(map);
   L.marker([37.840341, -122.292293]).bindTooltip(`<div class="city title">San Francisco</div>`).addTo(map);
-  //L.marker([40.944502, -90.363511]).bindTooltip(`<div class="city title">Galesburg</div>`).addTo(map);
   L.marker([34.055863, -118.234245]).bindTooltip(`<div class="city title">Los Angeles</div>`).addTo(map);
   L.marker([29.946275, -90.078913]).bindTooltip(`<div class="city title">La Nouvelle-Orléans</div>`).addTo(map);
   L.marker([40.750262, -73.992824]).bindTooltip(`<div class="city title">New York</div>`).addTo(map);
@@ -24,7 +29,9 @@ async function renderMap() {
       new L.geoJSON(res, {
         onEachFeature: function (feature, layer) {
           layer.bindTooltip(
-            `<div class="track title">${feature.properties.name}</div>`,
+            `<center class="track title">${feature.properties.name}</center>` + 
+            `<center>${(feature.properties.distance / 1000).toFixed(2)} km</center>` +
+            `<center>${convertString(feature.properties.time / 1000)}</center>`,
             { sticky: true, });
         },
         async: true,
@@ -101,8 +108,6 @@ async function renderMap() {
     var schDestDate = new Date(cur_travel.stations.at(-1).schDep)
     var curDestDate = new Date(cur_travel.stations.at(-1).dep)
     var diff_delay = (schDestDate - curDestDate) / 1000
-    var diff_hours = Math.floor(diff_delay / 3600, 1)
-    var diff_minutes = (diff_delay - 3600 * diff_hours) / 60
 
     let cur_pos = [cur_travel.lat, cur_travel.lon]
     L.marker(cur_pos, { icon: yellowIcon })
@@ -132,7 +137,7 @@ async function renderMap() {
       div.innerHTML += `<center><span>${cur_loc}</span></center>`;
       div.innerHTML += `<span>Vitesse actuelle : ${(1.609344 * cur_travel.velocity).toFixed(2)} km/h</span><br>`;
       div.innerHTML += `<span>Prochain arrêt : ${cur_travel.eventName}</span><br>`;
-      div.innerHTML += `<span>Retard de ${diff_hours}h${diff_minutes}m</span><br>`;
+      div.innerHTML += `<span>Retard de ${convertString(diff_delay)}</span><br>`;
       return div;
     };
     legend.addTo(map);
