@@ -5,6 +5,9 @@ let convertString = function (milisecs) {
 }
 
 async function renderMap() {
+
+  const frame = new L.LatLngBounds(new L.LatLng(32, -122.292293), new L.LatLng(45.500295, -73.567149))
+
   const map = L.map(document.querySelector(".map"));
 
   L.tileLayer("http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png").addTo(map);
@@ -20,7 +23,7 @@ async function renderMap() {
   L.marker([45.500295, -73.567149]).bindTooltip(`<div class="city title">Montréal</div>`).addTo(map);
   L.marker([38.898487, -77.005291]).bindTooltip(`<div class="city title">Washington</div>`).addTo(map);
 
-  map.fitBounds(new L.LatLngBounds(new L.LatLng(32, -122.292293), new L.LatLng(45.500295, -73.567149)));
+  map.fitBounds(frame);
 
   await fetch(`https://raw.githubusercontent.com/tlecardo/USProject/main/USTracks/Amtrak_tracks.geojson`)
     .then(res => res.json())
@@ -29,7 +32,7 @@ async function renderMap() {
       new L.geoJSON(res, {
         onEachFeature: function (feature, layer) {
           layer.bindTooltip(
-            `<center class="track title">${feature.properties.name}</center>` + 
+            `<center class="track title">${feature.properties.name}</center>` +
             `<center>${(feature.properties.distance / 1000).toFixed(2)} km</center>` +
             `<center>${convertString(feature.properties.time / 1000)}</center>`,
             { sticky: true, });
@@ -110,8 +113,25 @@ async function renderMap() {
     var diff_delay = (schDestDate - curDestDate) / 1000
 
     let cur_pos = [cur_travel.lat, cur_travel.lon]
-    L.marker(cur_pos, { icon: yellowIcon })
+    var marker = L.marker(cur_pos, { icon: yellowIcon })
       .addTo(map)
+
+
+    marker.on('click', function (e) {
+      var zoom = map.getZoom()
+
+      if (zoom === 10) {
+        map.fitBounds(frame, { duration: 1 });
+      } else {
+        map.flyTo(
+          e.latlng,
+          10,
+          {
+            animate: true,
+            duration: 1
+          });
+      }
+    });
 
     var cur_loc = await fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${cur_pos[0]}&lon=${cur_pos[1]}`)
       .then(res => res.json())
