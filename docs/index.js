@@ -4,31 +4,79 @@ let convertString = function (milisecs) {
   return `${diff_hours}h${diff_minutes}m`
 }
 
+let getCity = async function (pos) {
+  return await fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${pos[0]}&lon=${pos[1]}`)
+    .then(res => res.json())
+    .then(res => {
+      var key_city = Object.keys(res.address).includes("city") ? "city" : (
+        Object.keys(res.address).includes("town") ? "town" : (
+          Object.keys(res.address).includes("village") ? "village" : null))
+
+      var town = key_city ? new String(res.address[key_city]) : "----"
+      var state = new String(res.address["ISO3166-2-lvl4"].split("-")[1])
+      return `${town.slice(0, 20)} (${state})`
+    })
+}
+
 async function renderMap() {
 
   const frame = new L.LatLngBounds(new L.LatLng(32, -122.292293), new L.LatLng(45.500295, -73.567149))
 
-  const map = L.map(document.querySelector(".map"));
+  const map = L.map(document.querySelector(".map"), { attributionControl: false });
 
-  L.tileLayer("http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png").addTo(map);
-  L.control.scale().addTo(map);
+  L.tileLayer("http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png")
+    .addTo(map);
 
-  L.marker([42.641298, -73.741554]).bindTooltip(`<div class="city title">Albany</div>`).addTo(map);
-  L.marker([41.878773, -87.638622]).bindTooltip(`<div class="city title">Chicago</div>`).addTo(map);
-  L.marker([47.597811, -122.329564]).bindTooltip(`<div class="city title">Seattle</div>`).addTo(map);
-  L.marker([37.840341, -122.292293]).bindTooltip(`<div class="city title">San Francisco</div>`).addTo(map);
-  L.marker([34.055863, -118.234245]).bindTooltip(`<div class="city title">Los Angeles</div>`).addTo(map);
-  L.marker([29.946275, -90.078913]).bindTooltip(`<div class="city title">La Nouvelle-Orléans</div>`).addTo(map);
-  L.marker([40.750262, -73.992824]).bindTooltip(`<div class="city title">New York</div>`).addTo(map);
-  L.marker([45.500295, -73.567149]).bindTooltip(`<div class="city title">Montréal</div>`).addTo(map);
-  L.marker([38.898487, -77.005291]).bindTooltip(`<div class="city title">Washington</div>`).addTo(map);
+  L.control.scale({ position: 'bottomleft' })
+    .addTo(map);
+
+  var legend = L.control({ position: "bottomright" });
+  legend.onAdd = function (map) {
+    var div = L.DomUtil.create("div", "legend");
+    div.innerHTML += `<h4>Informations</h4>`;
+    div.innerHTML += `<center><span>---- (---)</span></center>`;
+    div.innerHTML += `<span>Vitesse actuelle : --.-- km/h</span><br>`;
+    div.innerHTML += `<span>Prochaine destination : ---- (---)</span><br>`;
+    return div;
+  };
+  legend.addTo(map);
+
+  L.marker([42.641298, -73.741554])
+    .bindTooltip(`<div class="city title">Albany</div>`)
+    .addTo(map);
+  L.marker([41.878773, -87.638622])
+    .bindTooltip(`<div class="city title">Chicago</div>`)
+    .addTo(map);
+  L.marker([47.597811, -122.329564])
+    .bindTooltip(`<div class="city title">Seattle</div>`)
+    .addTo(map);
+  L.marker([37.840341, -122.292293])
+    .bindTooltip(`<div class="city title">San Francisco</div>`)
+    .addTo(map);
+  L.marker([34.055863, -118.234245])
+    .bindTooltip(`<div class="city title">Los Angeles</div>`)
+    .addTo(map);
+  L.marker([29.946275, -90.078913])
+    .bindTooltip(`<div class="city title">La Nouvelle-Orléans</div>`)
+    .addTo(map);
+  L.marker([40.750262, -73.992824])
+    .bindTooltip(`<div class="city title">New York</div>`)
+    .addTo(map);
+  L.marker([45.500295, -73.567149])
+    .bindTooltip(`<div class="city title">Montréal</div>`)
+    .addTo(map);
+  L.marker([38.898487, -77.005291])
+    .bindTooltip(`<div class="city title">Washington</div>`)
+    .addTo(map);
 
   map.fitBounds(frame);
+
+  var center_default = map.getCenter()
+  var zoom_default = map.getZoom()
 
   await fetch(`https://raw.githubusercontent.com/tlecardo/USProject/main/USTracks/Amtrak_tracks.geojson`)
     .then(res => res.json())
     .then(res => {
-      console.log(res.body)
       new L.geoJSON(res, {
         onEachFeature: function (feature, layer) {
           layer.bindTooltip(
@@ -116,48 +164,35 @@ async function renderMap() {
     var marker = L.marker(cur_pos, { icon: yellowIcon })
       .addTo(map)
 
-
     marker.on('click', function (e) {
       var zoom = map.getZoom()
-
-      if (zoom === 10) {
-        map.fitBounds(frame, { duration: 1 });
-      } else {
-        map.flyTo(
-          e.latlng,
-          10,
-          {
-            animate: true,
-            duration: 1
-          });
-      }
+      map.flyTo(
+        zoom === 10 ? center_default : e.latlng,
+        zoom === 10 ? zoom_default : 10,
+        {
+          animate: true,
+          duration: 1
+        });
     });
 
-    var cur_loc = await fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${cur_pos[0]}&lon=${cur_pos[1]}`)
-      .then(res => res.json())
-      .then(res => {
-        var key_city = Object.keys(res.address).includes("city") ? "city" : (
-          Object.keys(res.address).includes("town") ? "town" : (
-            Object.keys(res.address).includes("village") ? "village" : null))
+    var cur_loc = await getCity(cur_pos)
 
-        var town = key_city ? new String(res.address[key_city]) : "----"
-        var state = new String(res.address["ISO3166-2-lvl4"].split("-")[1])
-        return `${town.slice(0, 20)} (${state})`
-      })
+    var next_travel = stations[cur_travel.eventCode]
+    let next_pos = [next_travel.lat, next_travel.lon]
+    var next_loc = await getCity(next_pos)
 
     var update_date = new Date(cur_travel.updatedAt)
     var diff_update = new Date(today - update_date)
     var seconds = `${diff_update.getSeconds()}`.padStart(2, "0")
     var minutes = `${diff_update.getMinutes()}`
 
-    var legend = L.control({ position: "bottomleft" });
     legend.onAdd = function (map) {
       var div = L.DomUtil.create("div", "legend");
       div.innerHTML += `<h4>Informations (act. ${minutes}' ${seconds}'')</h4>`;
       div.innerHTML += `<center><span>${cur_loc}</span></center>`;
       div.innerHTML += `<span>Vitesse actuelle : ${(1.609344 * cur_travel.velocity).toFixed(2)} km/h</span><br>`;
-      div.innerHTML += `<span>Prochain arrêt : ${cur_travel.eventName}</span><br>`;
-      div.innerHTML += `<span>Retard de ${convertString(diff_delay)}</span><br>`;
+      div.innerHTML += `<span>Prochain arrêt : ${next_loc}</span><br>`;
+      //div.innerHTML += `<span>Retard de ${convertString(diff_delay)}</span><br>`;
       return div;
     };
     legend.addTo(map);
@@ -180,11 +215,10 @@ async function renderMap() {
     L.marker(cur_pos, { icon: yellowIcon })
       .addTo(map)
 
-    var legend = L.control({ position: "bottomleft" });
     legend.onAdd = function (map) {
       var div = L.DomUtil.create("div", "legend");
       div.innerHTML += `<h4>Informations</h4>`;
-      div.innerHTML += `<span>Ville actuelle : ${cur_station.city} (${cur_station.state})</span><br>`;
+      div.innerHTML += `<span>${cur_station.city} (${cur_station.state})</span><br>`;
       div.innerHTML += `<span>Vitesse actuelle : --.-- km/h</span><br>`;
       div.innerHTML += `<span>Prochaine destination : ${next_term.city} (${next_term.state})</span><br>`;
       return div;
