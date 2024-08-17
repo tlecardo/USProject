@@ -27,15 +27,6 @@ var yellowIcon = new L.Icon({
   shadowSize: [41, 41],
 });
 
-var greenIcon = new L.Icon({
-  iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png',
-  shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
-  iconSize: [25, 41],
-  iconAnchor: [12, 41],
-  popupAnchor: [1, -34],
-  shadowSize: [41, 41],
-});
-
 async function renderMap() {
 
   const frame = new L.LatLngBounds(new L.LatLng(32, -122.292293), new L.LatLng(45.500295, -73.567149))
@@ -59,31 +50,31 @@ async function renderMap() {
   };
   legend.addTo(map);
 
-  L.marker([42.641298, -73.741554], { icon: greenIcon })
+  L.marker([42.641298, -73.741554])
     .bindTooltip(`<div class="city title">Albany</div>`)
     .addTo(map);
-  L.marker([41.878773, -87.638622], { icon: greenIcon })
+  L.marker([41.878773, -87.638622])
     .bindTooltip(`<div class="city title">Chicago</div>`)
     .addTo(map);
-  L.marker([47.597811, -122.329564], { icon: greenIcon })
+  L.marker([47.597811, -122.329564])
     .bindTooltip(`<div class="city title">Seattle</div>`)
     .addTo(map);
-  L.marker([37.840341, -122.292293], { icon: greenIcon })
+  L.marker([37.840341, -122.292293])
     .bindTooltip(`<div class="city title">San Francisco</div>`)
     .addTo(map);
-  L.marker([34.055863, -118.234245], { icon: greenIcon })
+  L.marker([34.055863, -118.234245])
     .bindTooltip(`<div class="city title">Los Angeles</div>`)
     .addTo(map);
-  L.marker([29.946275, -90.078913], { icon: greenIcon })
+  L.marker([29.946275, -90.078913])
     .bindTooltip(`<div class="city title">La Nouvelle-Orléans</div>`)
     .addTo(map);
-  L.marker([40.750262, -73.992824], { icon: greenIcon })
+  L.marker([40.750262, -73.992824])
     .bindTooltip(`<div class="city title">New York</div>`)
     .addTo(map);
-  L.marker([45.500295, -73.567149], { icon: greenIcon })
+  L.marker([45.500295, -73.567149])
     .bindTooltip(`<div class="city title">Montréal</div>`)
     .addTo(map);
-  L.marker([38.898487, -77.005291], { icon: greenIcon })
+  L.marker([38.898487, -77.005291])
     .bindTooltip(`<div class="city title">Washington</div>`)
     .addTo(map);
 
