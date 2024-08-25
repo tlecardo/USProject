@@ -29,6 +29,27 @@ var yellowIcon = new L.Icon({
 
 async function renderMap() {
 
+  var iconCity = L.divIcon({
+    className: 'custom-div-icon',
+    html: "<div style='background-color:#3d4be1;' class='marker-pin'></div><i class='material-icons'>location_city</i>",
+    iconSize: [30, 42],
+    iconAnchor: [15, 42]
+  });
+
+  var iconTrain = L.divIcon({
+    className: 'custom-div-icon',
+    html: "<div style='background-color:#3d4be1;' class='marker-pin'></div><i class='material-icons'>train</i>",
+    iconSize: [30, 42],
+    iconAnchor: [15, 42]
+  });
+
+  var iconShelter = L.divIcon({
+    className: 'custom-div-icon',
+    html: "<div style='background-color:#3d4be1;' class='marker-pin'></div><i class='material-icons'>night_shelter</i>",
+    iconSize: [30, 42],
+    iconAnchor: [15, 42]
+  });
+
   const frame = new L.LatLngBounds(new L.LatLng(32, -122.292293), new L.LatLng(45.500295, -73.567149))
 
   const map = L.map(document.querySelector(".map"), { attributionControl: false });
@@ -50,43 +71,80 @@ async function renderMap() {
   };
   legend.addTo(map);
 
-  L.marker([42.641298, -73.741554])
-    .bindTooltip(`<div class="city title">Albany</div>`)
-    .addTo(map);
-  L.marker([41.878773, -87.638622])
-    .bindTooltip(`<div class="city title">Chicago</div>`)
-    .addTo(map);
-  L.marker([47.597811, -122.329564])
-    .bindTooltip(`<div class="city title">Seattle</div>`)
-    .addTo(map);
-  L.marker([37.840341, -122.292293])
-    .bindTooltip(`<div class="city title">San Francisco</div>`)
-    .addTo(map);
-  L.marker([34.055863, -118.234245])
-    .bindTooltip(`<div class="city title">Los Angeles</div>`)
-    .addTo(map);
-  L.marker([29.946275, -90.078913])
-    .bindTooltip(`<div class="city title">La Nouvelle-Orléans</div>`)
-    .addTo(map);
-  L.marker([40.750262, -73.992824])
-    .bindTooltip(`<div class="city title">New York</div>`)
-    .addTo(map);
-  L.marker([45.500295, -73.567149])
-    .bindTooltip(`<div class="city title">Montréal</div>`)
-    .addTo(map);
-  L.marker([38.898487, -77.005291])
-    .bindTooltip(`<div class="city title">Washington</div>`)
-    .addTo(map);
 
-  // a voir
-  L.marker([31.7575839,-106.49583])
-    .bindTooltip(`<div class="city title">El Paso</div>`)
-    .addTo(map);
+  var cityMarkers = new L.FeatureGroup();
+  var stationMarkers = new L.FeatureGroup();
+
+  cityMarkers.addLayer(L.marker([42.6511674,-73.754968], { icon: iconCity })
+  .bindTooltip(`<div class="city title">Albany</div>`))
+  cityMarkers.addLayer(L.marker([41.878773, -87.638622], { icon: iconCity })
+  .bindTooltip(`<div class="city title">Chicago</div>`))
+  cityMarkers.addLayer(L.marker([47.597811, -122.329564], { icon: iconCity })
+  .bindTooltip(`<div class="city title">Seattle</div>`))
+  cityMarkers.addLayer(L.marker([37.7792588,-122.4193286], { icon: iconCity })
+  .bindTooltip(`<div class="city title">San Francisco</div>`))
+  cityMarkers.addLayer(L.marker([34.0536909,-118.242766], { icon: iconCity })
+  .bindTooltip(`<div class="city title">Los Angeles</div>`))
+  cityMarkers.addLayer(L.marker([29.946275, -90.078913], { icon: iconCity })
+  .bindTooltip(`<div class="city title">La Nouvelle-Orléans</div>`))
+  cityMarkers.addLayer(L.marker([40.750262, -73.992824], { icon: iconCity })
+  .bindTooltip(`<div class="city title">New York</div>`))
+  cityMarkers.addLayer(L.marker([45.500295, -73.567149], { icon: iconCity })
+  .bindTooltip(`<div class="city title">Montréal</div>`))
+  cityMarkers.addLayer(L.marker([38.898487, -77.005291], { icon: iconCity })
+  .bindTooltip(`<div class="city title">Washington</div>`))
+  cityMarkers.addLayer(L.marker([31.7575839, -106.49583], { icon: iconCity })
+  .bindTooltip(`<div class="city title">El Paso</div>`))
+
+  stationMarkers.addLayer(L.marker([42.641298, -73.741554], { icon: iconTrain })
+    .bindTooltip(`<div class="city title">Albany-Rensselaer Station</div>`))
+  stationMarkers.addLayer(L.marker([41.878773, -87.638622], { icon: iconTrain })
+    .bindTooltip(`<div class="city title">Chicago Union Station</div>`))
+  stationMarkers.addLayer(L.marker([47.597811, -122.329564], { icon: iconTrain })
+    .bindTooltip(`<div class="city title">Seattle King Street</div>`))
+  stationMarkers.addLayer(L.marker([37.840341, -122.292293], { icon: iconTrain })
+    .bindTooltip(`<div class="city title">Emeryville Station</div>`))
+  stationMarkers.addLayer(L.marker([34.055863, -118.234245], { icon: iconTrain })
+    .bindTooltip(`<div class="city title">Union Station</div>`))
+  stationMarkers.addLayer(L.marker([29.946275, -90.078913], { icon: iconTrain })
+    .bindTooltip(`<div class="city title">New-Orleans Station</div>`))
+  stationMarkers.addLayer(L.marker([40.750262, -73.992824], { icon: iconTrain })
+    .bindTooltip(`<div class="city title">New-York Penn Station</div>`))
+  stationMarkers.addLayer(L.marker([45.500295, -73.567149], { icon: iconTrain })
+    .bindTooltip(`<div class="city title">Gare Centrale</div>`))
+  stationMarkers.addLayer(L.marker([38.898487, -77.005291], { icon: iconTrain })
+    .bindTooltip(`<div class="city title">Washington Union Station</div>`))
+  stationMarkers.addLayer(L.marker([31.7575839, -106.49583], { icon: iconTrain })
+    .bindTooltip(`<div class="city title">Union Depot</div>`))
 
   map.fitBounds(frame);
 
   var center_default = map.getCenter()
   var zoom_default = map.getZoom()
+
+  var ChiLog = L.marker([41.87562082670103, -87.6264550090755], { icon: iconShelter })
+    .bindTooltip(`<div class="city title">HI Chicago Hostel</div>`)
+
+  var SFLog = L.marker([37.7879, -122.411994], { icon: iconShelter })
+    .bindTooltip(`<div class="city title">Fitzgerald Hotel Union Square</div>`)
+
+  var shelterMarkers = new L.FeatureGroup();
+  shelterMarkers.addLayer(ChiLog);
+  shelterMarkers.addLayer(SFLog);
+
+  map.addLayer(cityMarkers);
+
+  map.on('zoomend', function () {
+    if (map.getZoom() < 12) {
+      map.removeLayer(shelterMarkers);
+      map.removeLayer(stationMarkers);
+      map.addLayer(cityMarkers);
+    } else {
+      map.addLayer(shelterMarkers);
+      map.addLayer(stationMarkers);
+      map.removeLayer(cityMarkers);
+    }
+  });
 
   await fetch(`https://raw.githubusercontent.com/tlecardo/USProject/main/USTracks/Amtrak_tracks.geojson`)
     .then(res => res.json())
@@ -108,6 +166,121 @@ async function renderMap() {
   // test
 
   var sections = [
+    {
+      route: "Adirondack",
+      origin: {
+        code: "MTR",
+        date: ""
+      },
+      dest: {
+        code: "ALB",
+        date: ""
+      },
+    },
+    {
+      route: "Lake Shore Limited",
+      origin: {
+        code: "ALB",
+        date: ""
+      },
+      dest: {
+        code: "CHI",
+        date: ""
+      },
+    },
+    {
+      route: "Empire Builder",
+      origin: {
+        code: "CHI",
+        date: ""
+      },
+      dest: {
+        code: "SEA",
+        date: ""
+      },
+    },
+    {
+      route: "Coast Starlight",
+      origin: {
+        code: "SEA",
+        date: ""
+      },
+      dest: {
+        code: "EMY",
+        date: ""
+      },
+    },
+    {
+      route: "Coast Starlight",
+      origin: {
+        code: "EMY",
+        date: ""
+      },
+      dest: {
+        code: "LAX",
+        date: ""
+      },
+    },
+    {
+      route: "Sunset Limited",
+      origin: {
+        code: "LAX",
+        date: ""
+      },
+      dest: {
+        code: "ELP",
+        date: ""
+      },
+    },
+    {
+      route: "Sunset Limited",
+      origin: {
+        code: "ELP",
+        date: ""
+      },
+      dest: {
+        code: "NOL",
+        date: ""
+      },
+    },
+    {
+      route: "Crescent",
+      origin: {
+        code: "NOL",
+        date: ""
+      },
+      dest: {
+        code: "WAS",
+        date: ""
+      },
+    },
+    {
+      route: "",
+      origin: {
+        code: "WAS",
+        date: ""
+      },
+      dest: {
+        code: "NYP",
+        date: ""
+      },
+    },
+    ,
+    {
+      route: "Adirondack",
+      origin: {
+        code: "NYP",
+        date: ""
+      },
+      dest: {
+        code: "MTR",
+        date: ""
+      },
+    }
+  ]
+
+
+  sections = [
     {
       route: "Sunset Limited",
       origin: {

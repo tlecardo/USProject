@@ -1,66 +1,104 @@
 body {
-    margin: 0;
+  margin: 0;
 }
 
 .map {
-    width: 100vw;
-    height: 100vh;
+  width: 100vw;
+  height: 100vh;
 }
-  
-.track, .city {
-    text-align: center;
+
+.track,
+.city {
+  text-align: center;
 }
 
 .title {
-    font-size: medium;
-    font-weight: bolder;
+  font-size: medium;
+  font-weight: bolder;
 }
 
 .info {
-    font-size: mediums;
+  font-size: mediums;
 }
 
 /*Legend specific*/
 .legend {
-    padding: 6px 8px;
-    font: 14px Arial, Helvetica, sans-serif;
-    background: white;
-    background: rgba(255, 255, 255, 0.8);
-    /*box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);*/
-    /*border-radius: 5px;*/
-    line-height: 24px;
-    color: #555;
-  }
-  .legend h4 {
-    text-align: center;
-    font-size: 16px;
-    margin: 2px 12px 8px;
-    color: #777;
-  }
-  
-  .legend span {
-    position: relative;
-    bottom: 3px;
-  }
-  
-  .legend i {
-    width: 18px;
-    height: 18px;
-    float: left;
-    margin: 0 8px 0 0;
-    opacity: 0.7;
-  }
-  
-  .legend i.icon {
-    background-size: 18px;
-    background-color: rgba(255, 255, 255, 1);
-  }
+  padding: 6px 8px;
+  font: 14px Arial, Helvetica, sans-serif;
+  background: white;
+  background: rgba(255, 255, 255, 0.8);
+  /*box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);*/
+  /*border-radius: 5px;*/
+  line-height: 24px;
+  color: #555;
+}
 
-  .dot_plane {
-    height: 5px;
-    width: 5px;
-    background-color: #ff0000;
-    border-radius: 50%;
-    display: inline-block;
-  }
-  
+.legend h4 {
+  text-align: center;
+  font-size: 16px;
+  margin: 2px 12px 8px;
+  color: #777;
+}
+
+.legend span {
+  position: relative;
+  bottom: 3px;
+}
+
+.legend i {
+  width: 18px;
+  height: 18px;
+  float: left;
+  margin: 0 8px 0 0;
+  opacity: 0.7;
+}
+
+.legend i.icon {
+  background-size: 18px;
+  background-color: rgba(255, 255, 255, 1);
+}
+
+.dot_plane {
+  height: 5px;
+  width: 5px;
+  background-color: #ff0000;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.marker-pin {
+  width: 30px;
+  height: 30px;
+  border-radius: 50% 50% 50% 0;
+  background: #3d4be1;
+  position: absolute;
+  transform: rotate(-45deg);
+  left: 50%;
+  top: 50%;
+  margin: -15px 0 0 -15px;
+}
+
+.marker-pin::after {
+  content: '';
+  width: 24px;
+  height: 24px;
+  margin: 3px 0 0 3px;
+  background: #fff;
+  position: absolute;
+  border-radius: 50%;
+}
+
+.custom-div-icon i {
+  position: absolute;
+  width: 22px;
+  font-size: 22px;
+  left: 0;
+  right: 0;
+  margin: 10px auto;
+  text-align: center;
+}
+
+.custom-div-icon i.awesome {
+  margin: 12px auto;
+  font-size: 17px;
+}
