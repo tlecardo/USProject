@@ -136,12 +136,24 @@ async function renderMap() {
   var LALog = L.marker([34.0442543,-118.3035257], { icon: iconShelter })
     .bindTooltip(`<div class="city title">AirBnB</div>`)
 
+  var EPLog = L.marker([31.8158525,-106.5175854], { icon: iconShelter })
+    .bindTooltip(`<div class="city title">AirBnB</div>`)
+
+  var NOLog = L.marker([29.9680541,-90.0923779], { icon: iconShelter })
+    .bindTooltip(`<div class="city title">India House Hostel</div>`)
+
+  var WALog = L.marker([38.9217766,-77.042119], { icon: iconShelter })
+    .bindTooltip(`<div class="city title">Washington International Student Center</div>`)
+
   var shelterMarkers = new L.FeatureGroup();
   shelterMarkers.addLayer(AlbLog);
   shelterMarkers.addLayer(ChiLog);
   shelterMarkers.addLayer(SeaLog);
   shelterMarkers.addLayer(SFLog);
   shelterMarkers.addLayer(LALog);
+  shelterMarkers.addLayer(EPLog);
+  shelterMarkers.addLayer(NOLog);
+  shelterMarkers.addLayer(WALog);
 
   map.addLayer(cityMarkers);
 
