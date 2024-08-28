@@ -71,7 +71,6 @@ async function renderMap() {
   };
   legend.addTo(map);
 
-
   var cityMarkers = new L.FeatureGroup();
   var stationMarkers = new L.FeatureGroup();
 
@@ -122,14 +121,23 @@ async function renderMap() {
   var center_default = map.getCenter()
   var zoom_default = map.getZoom()
 
+  var AlbLog = L.marker([42.6729622,-73.783004], { icon: iconShelter })
+    .bindTooltip(`<div class="city title">AirBnB</div>`)
+
   var ChiLog = L.marker([41.87562082670103, -87.6264550090755], { icon: iconShelter })
     .bindTooltip(`<div class="city title">HI Chicago Hostel</div>`)
+
+  var SeaLog = L.marker([47.7364269, -122.3460506], { icon: iconShelter })
+    .bindTooltip(`<div class="city title">Americas Inn and Suite</div>`)
 
   var SFLog = L.marker([37.7879, -122.411994], { icon: iconShelter })
     .bindTooltip(`<div class="city title">Fitzgerald Hotel Union Square</div>`)
 
+
   var shelterMarkers = new L.FeatureGroup();
+  shelterMarkers.addLayer(AlbLog);
   shelterMarkers.addLayer(ChiLog);
+  shelterMarkers.addLayer(SeaLog);
   shelterMarkers.addLayer(SFLog);
 
   map.addLayer(cityMarkers);
