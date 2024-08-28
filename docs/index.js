@@ -133,12 +133,15 @@ async function renderMap() {
   var SFLog = L.marker([37.7879, -122.411994], { icon: iconShelter })
     .bindTooltip(`<div class="city title">Fitzgerald Hotel Union Square</div>`)
 
+  var LALog = L.marker([34.0442543,-118.3035257], { icon: iconShelter })
+    .bindTooltip(`<div class="city title">AirBnB</div>`)
 
   var shelterMarkers = new L.FeatureGroup();
   shelterMarkers.addLayer(AlbLog);
   shelterMarkers.addLayer(ChiLog);
   shelterMarkers.addLayer(SeaLog);
   shelterMarkers.addLayer(SFLog);
+  shelterMarkers.addLayer(LALog);
 
   map.addLayer(cityMarkers);
 
