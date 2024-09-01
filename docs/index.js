@@ -396,7 +396,7 @@ async function renderMap() {
     legend.onAdd = function (map) {
       var div = L.DomUtil.create("div", "legend");
       div.innerHTML += `<h4>Informations (act. ${minutes}' ${seconds}'')</h4>`;
-      div.innerHTML += `<center><span>${cur_loc}</span></center>`;
+      div.innerHTML += `<h2><span>${cur_loc}</span></h2>`;
       div.innerHTML += `<span>Vitesse actuelle : ${(1.609344 * cur_travel.velocity).toFixed(2)} km/h</span><br>`;
       div.innerHTML += `<span>Prochain arrêt : ${next_loc}</span><br>`;
       //div.innerHTML += `<span>Retard de ${convertString(diff_delay)}</span><br>`;
