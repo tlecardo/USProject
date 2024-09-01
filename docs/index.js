@@ -18,45 +18,19 @@ let getCity = async function (pos) {
     })
 }
 
-var yellowIcon = new L.Icon({
-  iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-yellow.png',
-  shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
-  iconSize: [25, 41],
-  iconAnchor: [12, 41],
-  popupAnchor: [1, -34],
-  shadowSize: [41, 41],
+var iconMarker = (name, color) => L.divIcon({
+  className: 'custom-div-icon',
+  html: `<div style='background-color:${color};' class='marker-pin'></div><i class='material-icons-outlined'>${name}</i>`,
+  iconSize: [30, 42],
+  iconAnchor: [15, 42]
 });
 
+var here = iconMarker("train", "#b40000")
+var iconTrain = iconMarker("train", "#3d4be1")
+var iconCity = iconMarker("location_city", "#3d4be1")
+var iconShelter = iconMarker("night_shelter", "#3d4be1")
+
 async function renderMap() {
-
-
-  var here = L.divIcon({
-    className: 'custom-div-icon',
-    html: "<div style='background-color:#b40000;' class='marker-pin'></div><i class='material-icons-outlined'>train</i>",
-    iconSize: [30, 42],
-    iconAnchor: [15, 42]
-  });
-
-  var iconCity = L.divIcon({
-    className: 'custom-div-icon',
-    html: "<div style='background-color:#3d4be1;' class='marker-pin'></div><i class='material-icons-outlined'>location_city</i>",
-    iconSize: [30, 42],
-    iconAnchor: [15, 42]
-  });
-
-  var iconTrain = L.divIcon({
-    className: 'custom-div-icon',
-    html: "<div style='background-color:#3d4be1;' class='marker-pin'></div><i class='material-icons-outlined'>train</i>",
-    iconSize: [30, 42],
-    iconAnchor: [15, 42]
-  });
-
-  var iconShelter = L.divIcon({
-    className: 'custom-div-icon',
-    html: "<div style='background-color:#3d4be1;' class='marker-pin'></div><i class='material-icons-outlined'>night_shelter</i>",
-    iconSize: [30, 42],
-    iconAnchor: [15, 42]
-  });
 
   const frame = new L.LatLngBounds(new L.LatLng(32, -122.292293), new L.LatLng(45.500295, -73.567149))
 
@@ -73,7 +47,7 @@ async function renderMap() {
     var div = L.DomUtil.create("div", "legend");
     div.innerHTML += `<h4>Informations</h4>`;
     div.innerHTML += `<h2><div class="wrapper"><i class='material-icons-outlined'>my_location</i>---- (---)</div></h2>`;
-    div.innerHTML += `<h2><div class="wrapper"><i class='material-icons-outlined'>speed</i>--.-- km/h km/h</div></h2>`;
+    div.innerHTML += `<h2><div class="wrapper"><i class='material-icons-outlined'>speed</i>--.-- km/h</div></h2>`;
     div.innerHTML += `<h2><div class="wrapper"><i class='material-icons-outlined'>skip_next</i>---- (---)</div></h2>`;
     return div;
   };
@@ -339,7 +313,7 @@ async function renderMap() {
         date: "2024-09-02T05:35:00-07:00"
       },
     }
-    ]
+  ]
 
   var today = new Date();
   var cur_section = sections.filter(section => today >= new Date(section.origin.date) && today <= new Date(section.dest.date))
@@ -372,6 +346,9 @@ async function renderMap() {
     let cur_pos = [cur_travel.lat, cur_travel.lon]
     var marker = L.marker(cur_pos, { icon: here })
       .addTo(map)
+
+
+    console.log(cur_travel)
 
     marker.on('click', function (e) {
       var zoom = map.getZoom()
