@@ -17,55 +17,6 @@ body {
   font-weight: bolder;
 }
 
-.info {
-  font-size: mediums;
-}
-
-/*Legend specific*/
-.legend {
-  padding: 6px 8px;
-  font: 14px Arial, Helvetica, sans-serif;
-  background: white;
-  background: rgba(255, 255, 255, 0.8);
-  /*box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);*/
-  /*border-radius: 5px;*/
-  line-height: 24px;
-  color: #555;
-}
-
-.legend h4 {
-  text-align: center;
-  font-size: 16px;
-  margin: 2px 12px 8px;
-  color: #777;
-}
-
-.legend span {
-  position: relative;
-  bottom: 3px;
-}
-
-.legend i {
-  width: 18px;
-  height: 18px;
-  float: left;
-  margin: 0 8px 0 0;
-  opacity: 0.7;
-}
-
-.legend i.icon {
-  background-size: 18px;
-  background-color: rgba(255, 255, 255, 1);
-}
-
-.dot_plane {
-  height: 5px;
-  width: 5px;
-  background-color: #ff0000;
-  border-radius: 50%;
-  display: inline-block;
-}
-
 .marker-pin {
   width: 30px;
   height: 30px;
@@ -101,4 +52,64 @@ body {
 .custom-div-icon i.awesome {
   margin: 12px auto;
   font-size: 17px;
+}
+
+
+/* color infos */
+
+.legend {
+  margin: 6px;
+  font: 14px Arial, Helvetica, sans-serif;
+  background: white;
+  background: rgba(255, 255, 255, 0.8);
+  line-height: 24px;
+  color: #555;
+}
+
+.legend h4 {
+  text-align: center;
+  font-size: 18px;
+  margin: 10px 12px 8px;
+  color: #777;
+}
+
+img.photos {
+  width: 20vw;
+}
+
+/*
+
+.legend span {
+  position: relative;
+  bottom: 3px;
+}
+
+.legend i {
+  width: 18px;
+  height: 18px;
+  float: left;
+  margin: 0 8px 0 0;
+  opacity: 0.7;
+}
+
+.legend i.icon {
+  background-size: 18px;
+  background-color: rgba(255, 255, 255, 1);
+}
+  */
+
+@media screen and (max-resolution: 1dppx) { /* max-width: 1100px) { */
+  .legend {
+     font: 1.5vw;
+     width: 98vw;
+     margin: 1vw;
+  }
+
+  .legend h4 {
+    font-size: 3vw;
+  }
+
+  img.photos {
+    width: 500px;
+  }
 }

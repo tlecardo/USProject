@@ -57,7 +57,7 @@ async function renderMap() {
   L.tileLayer("http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png")
     .addTo(map);
 
-  L.control.scale({ position: 'bottomleft' })
+  L.control.scale({ position: 'topright' })
     .addTo(map);
 
   var legend = L.control({ position: "bottomright" });
@@ -74,9 +74,6 @@ async function renderMap() {
   var cityMarkers = new L.FeatureGroup();
   var stationMarkers = new L.FeatureGroup();
 
-  var w = window.innerWidth;
-  var h = window.innerHeight;
-
   var mask = x => `https://lh3.googleusercontent.com/d/${x}`
   var id_lists = {
     "Montréal": [],
@@ -91,7 +88,7 @@ async function renderMap() {
     "New York": []
   }
 
-  let htmlPage = x => `<div class="city title">${x}</div>${id_lists[x].reduce((prev, id, idx) => prev + `<img src="${mask(id)}" width="${w / 5}" hspace="3" />${idx % 2 ? "<br>" : ""}`, "")}`
+  let htmlPage = x => `<div class="city title">${x}</div>${id_lists[x].reduce((prev, id, idx) => prev + `<img class="photos" src="${mask(id)}" hspace="3" />${idx % 2 ? "<br>" : ""}`, "")}`
 
   cityMarkers.addLayer(L.marker([42.6511674, -73.754968], { icon: iconCity })
     .bindTooltip(htmlPage("Albany")))
@@ -327,24 +324,14 @@ async function renderMap() {
       route: "Sunset Limited",
       origin: {
         code: "NOL",
-        date: "2024-08-05T09:00:00-05:00"
+        date: "2024-08-31T09:00:00-05:00"
       },
       dest: {
         code: "LAX",
-        date: "2024-08-07T05:35:00-07:00"
+        date: "2024-09-02T05:35:00-07:00"
       },
-    },
-    {
-      route: "Coast Starlight",
-      origin: {
-        code: "LAX",
-        date: "2024-08-07T09:51:00-07:00"
-      },
-      dest: {
-        code: "SEA",
-        date: "2024-08-08T19:51:00-07:00"
-      },
-    }]
+    }
+    ]
 
   var today = new Date();
   var cur_section = sections.filter(section => today >= new Date(section.origin.date) && today <= new Date(section.dest.date))
@@ -358,7 +345,7 @@ async function renderMap() {
   var trains = await fetch("https://api-v3.amtraker.com/v3/trains")
     .then(res => res.json())
     .then(res => { return Object.values(res).flat(Infinity) })
-  //console.log(trains)
+  console.log(trains)
 
   if (cur_section.length > 0) {
 
