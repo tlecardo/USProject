@@ -29,23 +29,31 @@ var yellowIcon = new L.Icon({
 
 async function renderMap() {
 
+
+  var here = L.divIcon({
+    className: 'custom-div-icon',
+    html: "<div style='background-color:#b40000;' class='marker-pin'></div><i class='material-icons-outlined'>train</i>",
+    iconSize: [30, 42],
+    iconAnchor: [15, 42]
+  });
+
   var iconCity = L.divIcon({
     className: 'custom-div-icon',
-    html: "<div style='background-color:#3d4be1;' class='marker-pin'></div><i class='material-icons'>location_city</i>",
+    html: "<div style='background-color:#3d4be1;' class='marker-pin'></div><i class='material-icons-outlined'>location_city</i>",
     iconSize: [30, 42],
     iconAnchor: [15, 42]
   });
 
   var iconTrain = L.divIcon({
     className: 'custom-div-icon',
-    html: "<div style='background-color:#3d4be1;' class='marker-pin'></div><i class='material-icons'>train</i>",
+    html: "<div style='background-color:#3d4be1;' class='marker-pin'></div><i class='material-icons-outlined'>train</i>",
     iconSize: [30, 42],
     iconAnchor: [15, 42]
   });
 
   var iconShelter = L.divIcon({
     className: 'custom-div-icon',
-    html: "<div style='background-color:#3d4be1;' class='marker-pin'></div><i class='material-icons'>night_shelter</i>",
+    html: "<div style='background-color:#3d4be1;' class='marker-pin'></div><i class='material-icons-outlined'>night_shelter</i>",
     iconSize: [30, 42],
     iconAnchor: [15, 42]
   });
@@ -64,9 +72,9 @@ async function renderMap() {
   legend.onAdd = function (map) {
     var div = L.DomUtil.create("div", "legend");
     div.innerHTML += `<h4>Informations</h4>`;
-    div.innerHTML += `<center><span>---- (---)</span></center>`;
-    div.innerHTML += `<span>Vitesse actuelle : --.-- km/h</span><br>`;
-    div.innerHTML += `<span>Prochaine destination : ---- (---)</span><br>`;
+    div.innerHTML += `<h2><div class="wrapper"><i class='material-icons-outlined'>my_location</i>---- (---)</div></h2>`;
+    div.innerHTML += `<h2><div class="wrapper"><i class='material-icons-outlined'>speed</i>--.-- km/h km/h</div></h2>`;
+    div.innerHTML += `<h2><div class="wrapper"><i class='material-icons-outlined'>skip_next</i>---- (---)</div></h2>`;
     return div;
   };
   legend.addTo(map);
@@ -361,14 +369,8 @@ async function renderMap() {
         return nb_match === 2
       })[0]
 
-    console.log(cur_travel)
-
-    var schDestDate = new Date(cur_travel.stations.at(-1).schDep)
-    var curDestDate = new Date(cur_travel.stations.at(-1).dep)
-    var diff_delay = (schDestDate - curDestDate) / 1000
-
     let cur_pos = [cur_travel.lat, cur_travel.lon]
-    var marker = L.marker(cur_pos, { icon: yellowIcon })
+    var marker = L.marker(cur_pos, { icon: here })
       .addTo(map)
 
     marker.on('click', function (e) {
@@ -384,7 +386,7 @@ async function renderMap() {
 
     var cur_loc = await getCity(cur_pos)
 
-    var next_travel = stations[cur_travel.eventCode]
+    var next_travel = stations[cur_section.dest.code]
     let next_pos = [next_travel.lat, next_travel.lon]
     var next_loc = await getCity(next_pos)
 
@@ -396,10 +398,9 @@ async function renderMap() {
     legend.onAdd = function (map) {
       var div = L.DomUtil.create("div", "legend");
       div.innerHTML += `<h4>Informations (act. ${minutes}' ${seconds}'')</h4>`;
-      div.innerHTML += `<h2><span>${cur_loc}</span></h2>`;
-      div.innerHTML += `<span>Vitesse actuelle : ${(1.609344 * cur_travel.velocity).toFixed(2)} km/h</span><br>`;
-      div.innerHTML += `<span>Prochain arrêt : ${next_loc}</span><br>`;
-      //div.innerHTML += `<span>Retard de ${convertString(diff_delay)}</span><br>`;
+      div.innerHTML += `<h2><div class="wrapper"><i class='material-icons-outlined'>my_location</i>${cur_loc}</div></h2>`;
+      div.innerHTML += `<h2><div class="wrapper"><i class='material-icons-outlined'>speed</i>${(1.609344 * cur_travel.velocity).toFixed(2)} km/h</div></h2>`;
+      div.innerHTML += `<h2><div class="wrapper"><i class='material-icons-outlined'>skip_next</i>${next_loc}</div></h2>`;
       return div;
     };
     legend.addTo(map);

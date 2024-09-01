@@ -60,24 +60,41 @@ body {
 .legend {
   margin: 6px;
   font: 14px Arial, Helvetica, sans-serif;
-  background: white;
-  background: rgba(255, 255, 255, 0.8);
+  background: rgb(237, 214, 214);
+  background: rgba(255, 255, 255, 0.9);
   line-height: 24px;
   color: #555;
 }
 
 .legend h4 {
+  font-weight: 700;
   text-align: center;
   font-size: 18px;
-  margin: 10px 12px 2px;
+  margin: 10px 12px 4px;
   color: #535353;
 }
 
 .legend h2 {
+  font-weight: 400;
   text-align: center;
-  font-size: 16px;
+  font-size: 18px;
   margin: 2px 12px 2px;
   color: #777;
+}
+
+.legend h2 .text {
+  font-size: 16px;
+  color: #949494;
+}
+
+.legend h2 .material-icons-outlined {
+  font-size: 30px;
+  margin-right: 10px;
+}
+
+.wrapper {
+  display: flex;
+  align-items: center;
 }
 
 img.photos {
@@ -105,20 +122,24 @@ img.photos {
 }
   */
 
-@media screen and (max-aspect-ratio: 1) and (max-width: 1000px){
+@media screen and (max-aspect-ratio: 1) and (max-width: 1000px) {
   .legend {
-     font: 1.5vw;
-     width: 98vw;
-     margin: 1vw;
+    font: 1.5vw;
+    width: 98vw;
+    margin: 1vw;
   }
 
   .legend h4 {
     font-size: 3vw;
   }
 
-  .legend h2 {
+  .legend h2 .text {
     font-size: 2.5vw;
-    margin: 6px 12px 2px;
+  }
+
+  .legend h2 {
+    font-size: 3vw;
+    margin: 1.5% 12px 1.5%;
   }
 
   img.photos {
