@@ -74,38 +74,45 @@ async function renderMap() {
   var cityMarkers = new L.FeatureGroup();
   var stationMarkers = new L.FeatureGroup();
 
-
-  // <div class="city title">Albany</div>
-  // https://drive.usercontent.google.com/download?id=15pMnwo8LR6HVG8c7JfXTsNf8KReG5boF
-
-
   var w = window.innerWidth;
   var h = window.innerHeight;
 
+  var mask = x => `https://lh3.googleusercontent.com/d/${x}`
+  var id_lists = {
+    "Montréal": [],
+    "Albany": ["15pMnwo8LR6HVG8c7JfXTsNf8KReG5boF"],
+    "Chicago": [],
+    "Seattle": [],
+    "San Francisco": [],
+    "Los Angeles": [],
+    "El Paso": [],
+    "La Nouvelle-Orléans": [],
+    "Washington": [],
+    "New York": []
+  }
 
-  let htmlPage = `<div class="city title">Albany</div><img src="https://lh3.googleusercontent.com/d/15pMnwo8LR6HVG8c7JfXTsNf8KReG5boF" width="${w/3}"/>`
+  let htmlPage = x => `<div class="city title">${x}</div>${id_lists[x].reduce((prev, id, idx) => prev + `<img src="${mask(id)}" width="${w / 5}" hspace="3" />${idx % 2 ? "<br>" : ""}`, "")}`
 
-
-  cityMarkers.addLayer(L.marker([42.6511674,-73.754968], { icon: iconCity })
-  .bindTooltip(htmlPage))
+  cityMarkers.addLayer(L.marker([42.6511674, -73.754968], { icon: iconCity })
+    .bindTooltip(htmlPage("Albany")))
   cityMarkers.addLayer(L.marker([41.878773, -87.638622], { icon: iconCity })
-  .bindTooltip(`<div class="city title">Chicago</div>`))
+    .bindTooltip(htmlPage("Chicago")))
   cityMarkers.addLayer(L.marker([47.597811, -122.329564], { icon: iconCity })
-  .bindTooltip(`<div class="city title">Seattle</div>`))
-  cityMarkers.addLayer(L.marker([37.7792588,-122.4193286], { icon: iconCity })
-  .bindTooltip(`<div class="city title">San Francisco</div>`))
-  cityMarkers.addLayer(L.marker([34.0536909,-118.242766], { icon: iconCity })
-  .bindTooltip(`<div class="city title">Los Angeles</div>`))
+    .bindTooltip(htmlPage("Seattle")))
+  cityMarkers.addLayer(L.marker([37.7792588, -122.4193286], { icon: iconCity })
+    .bindTooltip(htmlPage("San Francisco")))
+  cityMarkers.addLayer(L.marker([34.0536909, -118.242766], { icon: iconCity })
+    .bindTooltip(htmlPage("Los Angeles")))
   cityMarkers.addLayer(L.marker([29.946275, -90.078913], { icon: iconCity })
-  .bindTooltip(`<div class="city title">La Nouvelle-Orléans</div>`))
+    .bindTooltip(htmlPage("La Nouvelle-Orléans")))
   cityMarkers.addLayer(L.marker([40.750262, -73.992824], { icon: iconCity })
-  .bindTooltip(`<div class="city title">New York</div>`))
+    .bindTooltip(htmlPage("New York")))
   cityMarkers.addLayer(L.marker([45.500295, -73.567149], { icon: iconCity })
-  .bindTooltip(`<div class="city title">Montréal</div>`))
+    .bindTooltip(htmlPage("Montréal")))
   cityMarkers.addLayer(L.marker([38.898487, -77.005291], { icon: iconCity })
-  .bindTooltip(`<div class="city title">Washington</div>`))
+    .bindTooltip(htmlPage("Washington")))
   cityMarkers.addLayer(L.marker([31.7575839, -106.49583], { icon: iconCity })
-  .bindTooltip(`<div class="city title">El Paso</div>`))
+    .bindTooltip(htmlPage("El Paso")))
 
   stationMarkers.addLayer(L.marker([42.641298, -73.741554], { icon: iconTrain })
     .bindTooltip(`<div class="city title">Albany-Rensselaer Station</div>`))
@@ -113,7 +120,7 @@ async function renderMap() {
     .bindTooltip(`<div class="city title">Chicago Union Station</div>`))
   stationMarkers.addLayer(L.marker([47.597811, -122.329564], { icon: iconTrain })
     .bindTooltip(`<div class="city title">Seattle King Street</div>`))
-  stationMarkers.addLayer(L.marker([37.79370106439311,-122.27162491397662], { icon: iconTrain })
+  stationMarkers.addLayer(L.marker([37.79370106439311, -122.27162491397662], { icon: iconTrain })
     .bindTooltip(`<div class="city title">Oakland Jack London Station</div>`))
   stationMarkers.addLayer(L.marker([34.055863, -118.234245], { icon: iconTrain })
     .bindTooltip(`<div class="city title">Union Station</div>`))
@@ -133,7 +140,7 @@ async function renderMap() {
   var center_default = map.getCenter()
   var zoom_default = map.getZoom()
 
-  var AlbLog = L.marker([42.6729622,-73.783004], { icon: iconShelter })
+  var AlbLog = L.marker([42.6729622, -73.783004], { icon: iconShelter })
     .bindTooltip(`<div class="city title">AirBnB</div>`)
 
   var ChiLog = L.marker([41.87562082670103, -87.6264550090755], { icon: iconShelter })
@@ -145,16 +152,16 @@ async function renderMap() {
   var SFLog = L.marker([37.7879, -122.411994], { icon: iconShelter })
     .bindTooltip(`<div class="city title">Fitzgerald Hotel Union Square</div>`)
 
-  var LALog = L.marker([34.0442543,-118.3035257], { icon: iconShelter })
+  var LALog = L.marker([34.0442543, -118.3035257], { icon: iconShelter })
     .bindTooltip(`<div class="city title">AirBnB</div>`)
 
-  var EPLog = L.marker([31.8158525,-106.5175854], { icon: iconShelter })
+  var EPLog = L.marker([31.8158525, -106.5175854], { icon: iconShelter })
     .bindTooltip(`<div class="city title">AirBnB</div>`)
 
-  var NOLog = L.marker([29.9680541,-90.0923779], { icon: iconShelter })
+  var NOLog = L.marker([29.9680541, -90.0923779], { icon: iconShelter })
     .bindTooltip(`<div class="city title">India House Hostel</div>`)
 
-  var WALog = L.marker([38.9217766,-77.042119], { icon: iconShelter })
+  var WALog = L.marker([38.9217766, -77.042119], { icon: iconShelter })
     .bindTooltip(`<div class="city title">Washington International Student Center</div>`)
 
   var shelterMarkers = new L.FeatureGroup();
@@ -341,17 +348,17 @@ async function renderMap() {
 
   var today = new Date();
   var cur_section = sections.filter(section => today >= new Date(section.origin.date) && today <= new Date(section.dest.date))
-  console.log(cur_section)
+  //console.log(cur_section)
 
   var stations = await fetch("https://api-v3.amtraker.com/v3/stations")
     .then(res => res.json())
     .then(res => { return res })
-  console.log(stations)
+  //console.log(stations)
 
   var trains = await fetch("https://api-v3.amtraker.com/v3/trains")
     .then(res => res.json())
     .then(res => { return Object.values(res).flat(Infinity) })
-  console.log(trains)
+  //console.log(trains)
 
   if (cur_section.length > 0) {
 
