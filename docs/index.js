@@ -74,8 +74,20 @@ async function renderMap() {
   var cityMarkers = new L.FeatureGroup();
   var stationMarkers = new L.FeatureGroup();
 
+
+  // <div class="city title">Albany</div>
+  // https://drive.usercontent.google.com/download?id=15pMnwo8LR6HVG8c7JfXTsNf8KReG5boF
+
+
+  var w = window.innerWidth;
+  var h = window.innerHeight;
+
+
+  let htmlPage = `<div class="city title">Albany</div><img src="https://lh3.googleusercontent.com/d/15pMnwo8LR6HVG8c7JfXTsNf8KReG5boF" width="${w/3}"/>`
+
+
   cityMarkers.addLayer(L.marker([42.6511674,-73.754968], { icon: iconCity })
-  .bindTooltip(`<div class="city title">Albany</div>`))
+  .bindTooltip(htmlPage))
   cityMarkers.addLayer(L.marker([41.878773, -87.638622], { icon: iconCity })
   .bindTooltip(`<div class="city title">Chicago</div>`))
   cityMarkers.addLayer(L.marker([47.597811, -122.329564], { icon: iconCity })
