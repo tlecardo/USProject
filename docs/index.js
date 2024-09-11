@@ -1,3 +1,4 @@
+
 let convertString = function (milisecs) {
   var diff_hours = Math.floor(milisecs / 3600, 1)
   var diff_minutes = (milisecs - 3600 * diff_hours) / 60
@@ -25,7 +26,7 @@ var iconMarker = (name, color) => L.divIcon({
   iconAnchor: [15, 42]
 });
 
-var here = iconMarker("train", "#b40000")
+var here = iconMarker("people_alt", "#b40000")
 var iconTrain = iconMarker("train", "#3d4be1")
 var iconCity = iconMarker("location_city", "#3d4be1")
 var iconShelter = iconMarker("night_shelter", "#3d4be1")
@@ -34,7 +35,21 @@ async function renderMap() {
 
   const frame = new L.LatLngBounds(new L.LatLng(32, -122.292293), new L.LatLng(45.500295, -73.567149))
 
-  const map = L.map(document.querySelector(".map"), { attributionControl: false });
+  const map = L.map(document.querySelector(".map"), { attributionControl: false,
+    fullscreenControl: true,
+    fullscreenControlOptions: {
+      position: 'topleft'
+    } });
+
+    map.on('fullscreenchange', function () {
+      if (map.isFullscreen()) {
+          console.log('entered fullscreen');
+      } else {
+          console.log('exited fullscreen');
+      }
+      map.fitBounds(frame);
+
+  });
 
   L.tileLayer("http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png")
     .addTo(map);
@@ -53,13 +68,14 @@ async function renderMap() {
   };
   legend.addTo(map);
 
+
   var cityMarkers = new L.FeatureGroup();
   var stationMarkers = new L.FeatureGroup();
 
   var mask = x => `https://lh3.googleusercontent.com/d/${x}`
   var id_lists = {
-    "Montréal": [],
-    "Albany": ["15pMnwo8LR6HVG8c7JfXTsNf8KReG5boF"],
+    "Montréal": ["15pMnwo8LR6HVG8c7JfXTsNf8KReG5boF"],
+    "Albany": ["15pMnwo8LR6HV8c7JfXTsNf8KReG5boF"],
     "Chicago": [],
     "Seattle": [],
     "San Francisco": [],
@@ -70,7 +86,7 @@ async function renderMap() {
     "New York": []
   }
 
-  let htmlPage = x => `<div class="city title">${x}</div>${id_lists[x].reduce((prev, id, idx) => prev + `<img class="photos" src="${mask(id)}" hspace="3" />${idx % 2 ? "<br>" : ""}`, "")}`
+  let htmlPage = x => `<div class="city title">${x}</div>${id_lists[x].reduce((prev, id) => prev + `<img id="${id}" class="photos" src="${mask(id)}" hspace="3"/>`, "")}`
 
   cityMarkers.addLayer(L.marker([42.6511674, -73.754968], { icon: iconCity })
     .bindTooltip(htmlPage("Albany")))
@@ -305,12 +321,12 @@ async function renderMap() {
     {
       route: "Sunset Limited",
       origin: {
-        code: "NOL",
-        date: "2024-08-31T09:00:00-05:00"
+        code: "LAX",
+        date: "2024-09-08T22:00:00-07:00"
       },
       dest: {
-        code: "LAX",
-        date: "2024-09-02T05:35:00-07:00"
+        code: "NOL",
+        date: "2024-09-10T21:40:00-05:00"
       },
     }
   ]
@@ -346,9 +362,7 @@ async function renderMap() {
     let cur_pos = [cur_travel.lat, cur_travel.lon]
     var marker = L.marker(cur_pos, { icon: here })
       .addTo(map)
-
-
-    console.log(cur_travel)
+    //console.log(cur_travel)
 
     marker.on('click', function (e) {
       var zoom = map.getZoom()
@@ -403,9 +417,9 @@ async function renderMap() {
     legend.onAdd = function (map) {
       var div = L.DomUtil.create("div", "legend");
       div.innerHTML += `<h4>Informations</h4>`;
-      div.innerHTML += `<span>${cur_station.city} (${cur_station.state})</span><br>`;
-      div.innerHTML += `<span>Vitesse actuelle : --.-- km/h</span><br>`;
-      div.innerHTML += `<span>Prochaine destination : ${next_term.city} (${next_term.state})</span><br>`;
+      div.innerHTML += `<h2><div class="wrapper"><i class='material-icons-outlined'>my_location</i>${cur_station.city} (${cur_station.state})</div></h2>`;
+      div.innerHTML += `<h2><div class="wrapper"><i class='material-icons-outlined'>speed</i>00.00 km/h</div></h2>`;
+      div.innerHTML += `<h2><div class="wrapper"><i class='material-icons-outlined'>skip_next</i>${next_term.city} (${next_term.state})</div></h2>`;
       return div;
     };
 

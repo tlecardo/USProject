@@ -101,27 +101,6 @@ img.photos {
   width: 20vw;
 }
 
-/*
-
-.legend span {
-  position: relative;
-  bottom: 3px;
-}
-
-.legend i {
-  width: 18px;
-  height: 18px;
-  float: left;
-  margin: 0 8px 0 0;
-  opacity: 0.7;
-}
-
-.legend i.icon {
-  background-size: 18px;
-  background-color: rgba(255, 255, 255, 1);
-}
-  */
-
 @media screen and (max-aspect-ratio: 1) and (max-width: 1000px) {
   .legend {
     font: 1.5vw;
